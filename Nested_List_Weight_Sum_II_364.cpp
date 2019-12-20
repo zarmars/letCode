@@ -51,7 +51,45 @@
  * };
  */
  
- 
+  // 比较清晰的解法，但是需要两次dfs，效率较低
+     // 将问题分解为两个小问题。其一, 找到序列的最大深度. 其二, 求加权和.
+    int depthSumInverse(vector<NestedInteger>& nestedList) {
+        if(nestedList.empty()) return 0;
+
+        int maxDepth = getMaxDepth(nestedList);
+
+        int depthSum(0);
+        depthSum = getDepthSum(nestedList,maxDepth);
+
+        return depthSum;
+    }
+
+    int getMaxDepth(vector<NestedInteger>& nestedList) {
+        int maxDepth(0);
+
+        for(NestedInteger nInt : nestedList) {
+            if(nInt.isInteger()) continue;
+
+            maxDepth = max(maxDepth,getMaxDepth(nInt.getList()));
+        }
+
+        return maxDepth + 1;
+    }
+
+    int getDepthSum(vector<NestedInteger>& nestedList, int weight) {
+        int depthSum(0);
+
+        for(NestedInteger nInt : nestedList) {
+            if(nInt.isInteger()) {
+                depthSum += nInt.getInteger()*weight;
+                continue;
+            }
+
+            depthSum += getDepthSum(nInt.getList(),weight-1);
+        }
+
+        return depthSum;
+    }
 
 // 一种不太好的解法--思路不够清晰 没有将复杂问题分解为简单问题的叠加
 class Solution {
